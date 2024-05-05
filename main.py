@@ -1,8 +1,8 @@
-from src.board import Board
+from src.spellcast import Spellcast
 
-board = Board()
-board.load_file("board.txt")
+game = Spellcast()
+game.load_file("board.txt")
 
-print(str(board))
-print("\n")
-print([str(tile) for tile in board.adjacent_tiles(1, 0)])
+print("\n".join([
+    str(node) for node in game.legal_moves(lambda node : node.score())[:10]
+]))

@@ -1,4 +1,3 @@
-from src.utils import clamp
 from src.tile import Tile, TileModifier
 
 BoardTiles = list[list[Tile]]
@@ -26,7 +25,7 @@ class Board:
         loaded_tiles: BoardTiles = []
         board_file = open(file_path).read().splitlines()
 
-        for row in board_file:
+        for row_index, row in enumerate(board_file):
             if row.isdigit():
                 self.gems = int(row)
                 continue
@@ -42,7 +41,7 @@ class Board:
                     loaded_row[-1].modifiers.append(char)
                 else:
                     loaded_row.append(
-                        Tile(char.lower())
+                        Tile(char.lower(), len(loaded_row), row_index)
                     )
 
         self.tiles = loaded_tiles
@@ -50,13 +49,13 @@ class Board:
 
     def tile_at(self, x: int, y: int):
         try:
-            return self.tiles[max(y, 0)][max(x, 0)]
+            return self.tiles[y][x]
         except:
             return None
     
 
     def adjacent_tiles(self, x: int, y: int):
-        adjacent_tiles = []
+        adjacent_tiles: list[Tile] = []
 
         for y_offset in range(-1, 2):
             for x_offset in range(-1, 2):
