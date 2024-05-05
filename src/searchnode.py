@@ -10,13 +10,6 @@ class SearchNode(Tile):
 
     swap: bool
 
-    def __init__(self, parent: Self, letter: str, x: int, y: int, swap: bool = False):
-        super().__init__(letter, x, y)
-
-        self.parent = parent
-        self.swap = swap
-
-
     def __init__(self, parent: Self, tile: Tile, swap: bool = False):
         super().__init__(tile.letter, tile.x, tile.y)
         self.modifiers = tile.modifiers
@@ -26,7 +19,19 @@ class SearchNode(Tile):
 
 
     def __str__(self):
-        return f"{self.word()} - {self.score()} points"
+        swap_strings = []
+        for chain_node in self.chain():
+            if not chain_node.swap:
+                continue
+
+            swap_strings.append(
+                f"swap to {chain_node.letter} at (x: {chain_node.x}, y: {chain_node.y})"
+            )
+
+        swap_details_separator = " - " if len(swap_strings) > 0 else ""
+        swap_details = ", ".join(swap_strings)
+
+        return f"{self.word()} - {self.score()} points{swap_details_separator}{swap_details}"
 
 
     def chain(self):

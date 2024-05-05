@@ -32,15 +32,31 @@ class Spellcast(Board):
                 adjacent_node = SearchNode(current_node, adjacent_tile)
                 adjacent_word = parse_key(adjacent_node.word())
 
-                # Skip this branch if no words can be started with it
-                if not dictionary.has_subtrie(adjacent_word):
+                # If no words start with this branch, add possible swaps
+                if dictionary.has_subtrie(adjacent_word):
+                    frontier.append(adjacent_node)
+                elif self.gems >= (current_node.swap_count() + 1) * 3:
+                    current_trie_node = dictionary._get_node(parse_key(current_node.word()))[0]
+                    
+                    for child_trie_node in current_trie_node.children.iteritems():
+                        swap_letter = child_trie_node[0]
+
+                        swap_node = SearchNode(
+                            current_node,
+                            adjacent_tile,
+                            True
+                        )
+                        swap_node.letter = swap_letter
+                        
+                        frontier.append(swap_node) 
+
                     continue
 
                 # If the adjacent node makes a valid word, record it
                 if dictionary.has_key(adjacent_word):
                     legal_move_nodes.append(adjacent_node)
 
-                frontier.append(adjacent_node)
+                
 
         return legal_move_nodes
     
