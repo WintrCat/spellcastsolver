@@ -30,13 +30,13 @@ letter_values = {
 
 class Tile:
     letter: str
-    modifiers: list[str]
+    modifiers: set[str]
     x: int
     y: int
 
     def __init__(self, letter: str, x: int, y: int):
         self.letter = letter
-        self.modifiers = []
+        self.modifiers = set()
         self.x = x
         self.y = y
 

@@ -39,7 +39,7 @@ class Board:
                     if len(loaded_row) == 0:
                         continue
                     
-                    loaded_row[-1].modifiers.append(char)
+                    loaded_row[-1].modifiers.add(char)
                 else:
                     loaded_row.append(
                         Tile(char.lower(), len(loaded_row), row_index)
@@ -64,16 +64,16 @@ class Board:
                 )
         
         # Apply modifiers to random selection of tiles
-        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.append(TileModifier.DOUBLE_WORD)
+        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.add(TileModifier.DOUBLE_WORD)
 
-        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.append(TileModifier.DOUBLE_LETTER)
+        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.add(TileModifier.DOUBLE_LETTER)
 
         if include_triple_letters:
             while True:
                 target_tile = loaded_tiles[randint(0, height - 1)][randint(0, width - 1)]
 
                 if TileModifier.DOUBLE_LETTER not in target_tile.modifiers:
-                    target_tile.modifiers.append(TileModifier.TRIPLE_LETTER)
+                    target_tile.modifiers.add(TileModifier.TRIPLE_LETTER)
                     break
 
         self.tiles = loaded_tiles
