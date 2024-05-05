@@ -19,6 +19,7 @@ class SearchNode(Tile):
 
     def __init__(self, parent: Self, tile: Tile, swap: bool = False):
         super().__init__(tile.letter, tile.x, tile.y)
+        self.modifiers = tile.modifiers
 
         self.parent = parent
         self.swap = swap
@@ -69,3 +70,10 @@ class SearchNode(Tile):
             score += 10
 
         return score
+    
+
+    def swap_count(self):
+        return [
+            chain_node.swap
+            for chain_node in self.chain()
+        ].count(True)

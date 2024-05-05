@@ -1,3 +1,4 @@
+from random import randint, choice
 from src.tile import Tile, TileModifier
 
 BoardTiles = list[list[Tile]]
@@ -43,6 +44,37 @@ class Board:
                     loaded_row.append(
                         Tile(char.lower(), len(loaded_row), row_index)
                     )
+
+        self.tiles = loaded_tiles
+
+
+    def load_random(self, width: int, height: int, include_triple_letters: bool = False):
+        loaded_tiles: BoardTiles = []
+
+        alphabet = list("abcdefghijklmnopqrstuvwxyz")
+
+        # Add random letters to the board
+        for y in range(height):
+            loaded_row = []
+            loaded_tiles.append(loaded_row)
+
+            for x in range(width):
+                loaded_row.append(
+                    Tile(choice(alphabet), x, y)
+                )
+        
+        # Apply modifiers to random selection of tiles
+        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.append(TileModifier.DOUBLE_WORD)
+
+        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.append(TileModifier.DOUBLE_LETTER)
+
+        if include_triple_letters:
+            while True:
+                target_tile = loaded_tiles[randint(0, height - 1)][randint(0, width - 1)]
+
+                if TileModifier.DOUBLE_LETTER not in target_tile.modifiers:
+                    target_tile.modifiers.append(TileModifier.TRIPLE_LETTER)
+                    break
 
         self.tiles = loaded_tiles
 
