@@ -25,7 +25,7 @@ class SearchNode(Tile):
                 continue
 
             swap_strings.append(
-                f"swap to {chain_node.letter} at (x: {chain_node.x}, y: {chain_node.y})"
+                f"swap to {chain_node.letter} at (x: {chain_node.x + 1}, y: {chain_node.y + 1})"
             )
 
         swap_details_separator = " - " if len(swap_strings) > 0 else ""

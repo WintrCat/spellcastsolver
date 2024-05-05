@@ -8,7 +8,7 @@ dictionary = get_dictionary()
 
 class Spellcast(Board):
     def legal_moves_from(self, x: int, y: int):
-        legal_move_nodes: list[SearchNode] = []
+        legal_move_nodes: deque[SearchNode] = deque()
 
         frontier: deque[SearchNode] = deque()
         frontier.append(
@@ -32,6 +32,10 @@ class Spellcast(Board):
                 adjacent_node = SearchNode(current_node, adjacent_tile)
                 adjacent_word = parse_key(adjacent_node.word())
 
+                # If the adjacent node makes a valid word, record it
+                if dictionary.has_key(adjacent_word):
+                    legal_move_nodes.append(adjacent_node)
+
                 # If no words start with this branch, add possible swaps
                 if dictionary.has_subtrie(adjacent_word):
                     frontier.append(adjacent_node)
@@ -52,13 +56,7 @@ class Spellcast(Board):
 
                     continue
 
-                # If the adjacent node makes a valid word, record it
-                if dictionary.has_key(adjacent_word):
-                    legal_move_nodes.append(adjacent_node)
-
-                
-
-        return legal_move_nodes
+        return list(legal_move_nodes)
     
 
     def legal_moves(self, sort_key = None, sort_reverse: bool = True):
@@ -70,7 +68,7 @@ class Spellcast(Board):
                 legal_move_nodes += self.legal_moves_from(x, y)
 
         # Remove duplicates, only keeping the best copies of each word
-        unique_move_map = {}
+        unique_move_map: dict[str, SearchNode] = {}
         for legal_move_node in legal_move_nodes:
             legal_move_word = legal_move_node.word()
             existing_move_node = unique_move_map.get(legal_move_word)
@@ -83,7 +81,7 @@ class Spellcast(Board):
                 legal_move_node.score() == existing_move_node.score()
                 and legal_move_node.swap_count() < existing_move_node.swap_count()
             ):
-               unique_move_map[legal_move_word] = legal_move_node
+                unique_move_map[legal_move_word] = legal_move_node
 
         legal_move_nodes = list(unique_move_map.values())
 

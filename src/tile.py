@@ -48,12 +48,15 @@ class Tile:
 
     def value(self):
         value = letter_values[self.letter]
-        
-        if TileModifier.DOUBLE_LETTER in self.modifiers:
-            value *= 2
-        
-        if TileModifier.TRIPLE_LETTER in self.modifiers:
-            value *= 3
+
+        for modifier in self.modifiers:
+            match modifier:
+                case TileModifier.DOUBLE_LETTER:
+                    value *= 2
+                    break
+                case TileModifier.TRIPLE_LETTER:
+                    value *= 3
+                    break
 
         return value
 
