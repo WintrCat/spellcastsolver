@@ -40,7 +40,9 @@ class Spellcast(Board):
                 if dictionary.has_subtrie(adjacent_word):
                     frontier.append(adjacent_node)
                 elif self.gems >= (current_node.swap_count() + 1) * 3:
-                    current_trie_node = dictionary._get_node(parse_key(current_node.word()))[0]
+                    current_trie_node = dictionary._get_node(
+                        parse_key(current_node.word())
+                    )[0]
                     
                     for child_trie_node in current_trie_node.children.iteritems():
                         swap_letter = child_trie_node[0]
@@ -52,9 +54,7 @@ class Spellcast(Board):
                         )
                         swap_node.letter = swap_letter
                         
-                        frontier.append(swap_node) 
-
-                    continue
+                        frontier.append(swap_node)
 
         return list(legal_move_nodes)
     
@@ -65,6 +65,9 @@ class Spellcast(Board):
         # Record all legal moves from all root tiles on the board
         for y in range(len(self.tiles)):
             for x in range(len(self.tiles[y])):
+                if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
+                    continue
+                
                 legal_move_nodes += self.legal_moves_from(x, y)
 
         # Remove duplicates, only keeping the best copies of each word

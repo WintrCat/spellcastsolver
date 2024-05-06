@@ -1,7 +1,7 @@
 from pygtrie import StringTrie
 from pickle import load, dump
 
-def parse_key(key):
+def parse_key(key: str):
     return "/".join(list(key))
 
 
