@@ -87,8 +87,6 @@ class Board:
     
 
     def adjacent_tiles(self, x: int, y: int):
-        adjacent_tiles: list[Tile] = []
-
         for y_offset in range(-1, 2):
             for x_offset in range(-1, 2):
                 if x_offset == 0 and y_offset == 0:
@@ -101,6 +99,4 @@ class Board:
 
                 adjacent_tile = self.tile_at(adjacent_x, adjacent_y)
                 if adjacent_tile is not None:
-                    adjacent_tiles.append(adjacent_tile)
-        
-        return adjacent_tiles
+                    yield adjacent_tile

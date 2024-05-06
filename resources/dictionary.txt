@@ -40723,6 +40723,7 @@ furfural
 furfurals
 furfuran
 furfurans
+furfures
 furies
 furious
 furiously
@@ -42826,6 +42827,7 @@ goatsucker
 goatsuckers
 gob
 gobang
+gobangs
 gobbed
 gobbet
 gobbets
