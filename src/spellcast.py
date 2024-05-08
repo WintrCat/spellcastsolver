@@ -2,9 +2,7 @@ from collections import deque
 from src.board import Board
 from src.tile import TileModifier
 from src.searchnode import SearchNode
-from src.dictionary import get_dictionary, parse_key
-
-dictionary = get_dictionary()
+import src.dictionary as dictionary
 
 class Spellcast(Board):
     def legal_moves_from(self, x: int, y: int):
@@ -29,30 +27,29 @@ class Spellcast(Board):
                 if current_node.chain_contains(adjacent_tile.x, adjacent_tile.y):
                     continue
 
+                # Create search node from adjacent tile
                 adjacent_node = SearchNode(current_node, adjacent_tile)
-                adjacent_word = parse_key(adjacent_node.word())
+                adjacent_word = adjacent_node.word()
 
                 # If the adjacent node makes a valid word, record it
-                if dictionary.has_key(adjacent_word):
+                if dictionary.has_word(adjacent_word):
                     legal_move_nodes.append(adjacent_node)
 
                 # If no words start with this branch, add possible swaps
-                if dictionary.has_subtrie(adjacent_word):
+                if dictionary.has_prefix(adjacent_word):
                     frontier.append(adjacent_node)
-                elif self.gems >= (current_node.swap_count() + 1) * 3:
-                    current_trie_node = dictionary._get_node(
-                        parse_key(current_node.word())
-                    )[0]
-                    
-                    for child_trie_node in current_trie_node.children.iteritems():
-                        swap_letter = child_trie_node[0]
+                elif self.gems >= (current_node.swap_count() + 1) * 3:                    
+                    for letter in dictionary.alphabet:
+                        current_word = adjacent_word[:-1]
+                        if not dictionary.has_prefix(current_word + letter):
+                            continue
 
                         swap_node = SearchNode(
                             current_node,
                             adjacent_tile,
                             True
                         )
-                        swap_node.letter = swap_letter
+                        swap_node.letter = letter
                         
                         frontier.append(swap_node)
 

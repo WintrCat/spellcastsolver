@@ -1,25 +1,24 @@
-from pygtrie import StringTrie
-from pickle import load, dump
+alphabet = list("abcdefghijklmnopqrstuvwxyz")
 
-def parse_key(key: str):
-    return "/".join(list(key))
+dictionary = set(
+    open("resources/dictionary.txt").read().splitlines()
+)
+
+cut_dictionaries = [
+    set(
+        open(f"resources/wordlists/dictionary{word_length}.txt").read().splitlines()
+    )
+    for word_length in range(2, 23)
+]
+
+def has_word(word: str):
+    return word in dictionary
 
 
-def get_dictionary():
-    try:
-        dictionaryCache: StringTrie = load(
-            open("dictionary.pkl", "rb")
-        )
-        return dictionaryCache
-    except:
-        print("no dictionary trie found, generating one...")
+def has_prefix(prefix: str):
+    prefix_length = len(prefix)
 
-    words = open("resources/dictionary.txt", "r").read().splitlines()
+    if prefix_length < 2:
+        return True
 
-    dictionary = StringTrie()
-    for word in words:
-        dictionary[parse_key(word)] = True
-
-    dump(dictionary, open("dictionary.pkl", "wb"))
-
-    return dictionary
+    return prefix in cut_dictionaries[prefix_length - 2]

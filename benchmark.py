@@ -3,9 +3,9 @@ from src.spellcast import Spellcast
 from src.searchnode import SearchNode
 
 ### CONFIGURATION ###
-BOARD_COUNT = 20
+BOARD_COUNT = 100
 TRIPLE_LETTER_TILES = True
-GEMS = 9
+GEMS = 3
 #####################
 
 start_time = time()
