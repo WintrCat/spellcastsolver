@@ -40,6 +40,9 @@ class Spellcast(Board):
                     frontier.append(adjacent_node)
                 elif self.gems >= (current_node.swap_count() + 1) * 3:                    
                     for letter in dictionary.alphabet:
+                        if letter == adjacent_node.letter:
+                            continue
+
                         current_word = adjacent_word[:-1]
                         if not dictionary.has_prefix(current_word + letter):
                             continue
