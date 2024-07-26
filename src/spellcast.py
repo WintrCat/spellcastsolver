@@ -13,9 +13,12 @@ class Spellcast(Board):
         root_tile = self.tile_at(x, y)
         if self.gems >= 3:
             for letter in dictionary.alphabet:
-                swapped_node = SearchNode(None, root_tile)
+                swapped_node = SearchNode(
+                    None,
+                    root_tile,
+                    letter != root_tile.letter
+                )
                 swapped_node.letter = letter
-                swapped_node.swap = swapped_node.letter != root_tile.letter
 
                 frontier.append(swapped_node)
         else:

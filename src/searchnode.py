@@ -1,6 +1,8 @@
 from typing_extensions import Self
 from src.tile import Tile, TileModifier
 
+AVERAGE_SCORES = [33, 56, 71, 83]
+
 class SearchNode(Tile):
     parent: Self | None
 
@@ -75,7 +77,24 @@ class SearchNode(Tile):
             score += 10
 
         return score
-    
+        
+        
+    def estimated_long_term_score(self, initial_gems: int):
+        final_gem_count = initial_gems + self.gem_count()
+        gem_value = 0
+        
+        for threshold in range(3, 9)
+        
+        if initial_gems < 3 and final_gem_count >= 3:
+            gem_value += AVERAGE_SCORES[1] - AVERAGE_SCORES[0]
+
+
+    def gem_count(self):
+        return [
+            TileModifier.GEM in chain_node.modifiers
+            for chain_node in self.chain()
+        ].count(True)
+
 
     def swap_count(self):
         return [

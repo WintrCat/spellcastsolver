@@ -4,7 +4,7 @@ from src.searchnode import SearchNode
 
 ### CONFIGURATION ###
 BOARD_COUNT = 100
-TRIPLE_LETTER_TILES = True
+TRIPLE_LETTER_TILES = False
 GEMS = 3
 #####################
 
