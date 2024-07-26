@@ -9,9 +9,19 @@ class Spellcast(Board):
         legal_move_nodes: deque[SearchNode] = deque()
 
         frontier: deque[SearchNode] = deque()
-        frontier.append(
-            SearchNode(None, self.tile_at(x, y))
-        )
+
+        root_tile = self.tile_at(x, y)
+        if self.gems >= 3:
+            for letter in dictionary.alphabet:
+                swapped_node = SearchNode(None, root_tile)
+                swapped_node.letter = letter
+                swapped_node.swap = swapped_node.letter != root_tile.letter
+
+                frontier.append(swapped_node)
+        else:
+            frontier.append(
+                SearchNode(None, root_tile)
+            )
 
         while len(frontier) > 0:
             current_node = frontier.pop()
@@ -78,11 +88,12 @@ class Spellcast(Board):
 
             if existing_move_node is None:
                 unique_move_map[legal_move_word] = legal_move_node
-            elif legal_move_node.score() > existing_move_node.score():
-                unique_move_map[legal_move_word] = legal_move_node
             elif (
-                legal_move_node.score() == existing_move_node.score()
-                and legal_move_node.swap_count() < existing_move_node.swap_count()
+                legal_move_node.score() > existing_move_node.score()
+                or (
+                    legal_move_node.score() == existing_move_node.score()
+                    and legal_move_node.swap_count() < existing_move_node.swap_count()
+                )
             ):
                 unique_move_map[legal_move_word] = legal_move_node
 

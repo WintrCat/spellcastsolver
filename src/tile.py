@@ -66,5 +66,6 @@ class TileModifier:
     DOUBLE_LETTER = "+"
     TRIPLE_LETTER = "*"
     FROZEN = "#"
+    GEM = "g"
 
-    values = list("$+*#")
+    values = list("$+*#g")
