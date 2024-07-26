@@ -33,7 +33,7 @@ class SearchNode(Tile):
         swap_details_separator = " - " if len(swap_strings) > 0 else ""
         swap_details = ", ".join(swap_strings)
 
-        return f"{self.word()} - {self.score()} points{swap_details_separator}{swap_details}"
+        return f"{self.word()} - {self.score()} points, {self.gem_count()} gems{swap_details_separator}{swap_details}"
 
 
     def chain(self):
