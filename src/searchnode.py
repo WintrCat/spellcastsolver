@@ -1,5 +1,8 @@
 from typing_extensions import Self
+from json import load
 from src.tile import Tile, TileModifier
+
+config = load(open("config.json"))
 
 AVERAGE_SCORES = [33, 57, 71, 83]
 
@@ -20,7 +23,7 @@ class SearchNode(Tile):
         self.swap = swap
 
 
-    def __str__(self):
+    def to_string(self, context = None):
         swap_strings = []
         for chain_node in self.chain():
             if not chain_node.swap:
@@ -30,16 +33,32 @@ class SearchNode(Tile):
                 f"swap to {chain_node.letter} at (x: {chain_node.x + 1}, y: {chain_node.y + 1})"
             )
 
-        swap_details_separator = " - " if len(swap_strings) > 0 else ""
         swap_details = ", ".join(swap_strings)
 
-        return f"{self.word()} - {self.score()} points, {self.gem_count()} gems{swap_details_separator}{swap_details}"
+        return (
+            f"{self.word()} - {self.score()} points, "
+            + f"{self.gem_count()} gems"
+            + (" - " if len(swap_strings) > 0 else "")
+            + swap_details
+            + (
+                (
+                    "\nestimated long term value: "
+                    + str(self.estimated_long_term_score(context))
+                )
+                if (
+                    config["gemManagement"]
+                    and context is not None
+                    and context.match_round < 5
+                )
+                else ""
+            )
+        )
 
 
     def chain(self):
         nodes: list[Self] = [self]
 
-        while nodes[0].parent != None:
+        while nodes[0].parent is not None:
             nodes.insert(0, nodes[0].parent)
 
         return nodes
@@ -79,15 +98,16 @@ class SearchNode(Tile):
         return score
 
 
-    def estimated_long_term_score(self, initial_gems: int):
-        final_gem_count = initial_gems + self.gem_count()
+    def estimated_long_term_score(self, context):
+        final_gem_count = context.gems + self.gem_count()
         gem_value = 0
 
-        for i in range(1, 4):
-            threshold = i * 3
+        if context.match_round < 5:
+            for i in range(1, 4):
+                threshold = i * 3
 
-            if initial_gems < threshold and final_gem_count >= threshold:
-                gem_value += AVERAGE_SCORES[i] - AVERAGE_SCORES[i - 1]
+                if context.gems < threshold and final_gem_count >= threshold:
+                    gem_value += AVERAGE_SCORES[i] - AVERAGE_SCORES[i - 1]
 
         return self.score() + gem_value
 
