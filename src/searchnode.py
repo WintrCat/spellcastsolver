@@ -105,7 +105,7 @@ class SearchNode(Tile):
         )
 
         average_next_score = (
-            AVERAGE_SCORES[int(final_gem_count / 3)]
+            AVERAGE_SCORES[min(int(final_gem_count / 3), 3)]
             - AVERAGE_SCORES[0]
         )
 
