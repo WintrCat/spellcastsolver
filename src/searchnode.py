@@ -99,17 +99,20 @@ class SearchNode(Tile):
 
 
     def estimated_long_term_score(self, context):
-        final_gem_count = context.gems + self.gem_count()
-        gem_value = 0
+        final_gem_count = (
+            context.gems + self.gem_count()
+            - (self.swap_count() * 3)
+        )
 
-        if context.match_round < 5:
-            for i in range(1, 4):
-                threshold = i * 3
+        average_next_score = (
+            AVERAGE_SCORES[int(final_gem_count / 3)]
+            - AVERAGE_SCORES[0]
+        )
 
-                if context.gems < threshold and final_gem_count >= threshold:
-                    gem_value += AVERAGE_SCORES[i] - AVERAGE_SCORES[i - 1]
+        if context.match_round == 5:
+            average_next_score = 0
 
-        return self.score() + gem_value
+        return self.score() + average_next_score
 
 
     def gem_count(self):

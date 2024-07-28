@@ -5,7 +5,9 @@ BoardTiles = list[list[Tile]]
 
 class Board:
     tiles: BoardTiles
-    gems: int
+    gems: int = 0
+    match_round: int = 0
+
 
     def __init__(self, tiles: BoardTiles = [], gems: int = 0):
         self.tiles = tiles
@@ -25,10 +27,17 @@ class Board:
     def load_file(self, file_path: str): 
         loaded_tiles: BoardTiles = []
         board_file = open(file_path).read().splitlines()
+        
+        digit_row_index = 0
 
         for row_index, row in enumerate(board_file):
             if row.isdigit():
-                self.gems = int(row)
+                if digit_row_index == 0:
+                    self.gems = int(row)
+                elif digit_row_index == 1:
+                    self.match_round = int(row)
+
+                digit_row_index += 1
                 continue
 
             loaded_row = []
