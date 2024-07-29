@@ -1,5 +1,6 @@
 from sys import argv
 from src.benchmarks.boards import main as boards
+from src.benchmarks.games import main as games
 
 benchmark = ""
 
@@ -11,6 +12,6 @@ else:
 if benchmark == "boards":
     boards()
 elif benchmark == "games":
-    pass
+    games()
 else:
     print("invalid benchmark type provided.")

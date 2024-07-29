@@ -1,5 +1,7 @@
 from random import randint, choice
 from src.tile import Tile, TileModifier
+from src.searchnode import SearchNode
+import src.dictionary as dictionary
 
 BoardTiles = list[list[Tile]]
 
@@ -7,6 +9,15 @@ class Board:
     tiles: BoardTiles
     gems: int = 0
     match_round: int = 0
+
+
+    def flat_packed_tiles(tiles: BoardTiles):
+        flat_packed_tiles = []
+        for row in tiles:
+            for tile in row:
+                flat_packed_tiles.append(tile)
+
+        return flat_packed_tiles
 
 
     def __init__(self, tiles: BoardTiles = [], gems: int = 0):
@@ -21,7 +32,10 @@ class Board:
                 str(tile) for tile in row
             ]))
 
-        return "\n".join(board_lines)
+        return (
+            "\n".join(board_lines)
+            + f"\n{self.gems} gems"
+        )
 
 
     def load_file(self, file_path: str): 
@@ -57,10 +71,13 @@ class Board:
         self.tiles = loaded_tiles
 
 
-    def load_random(self, width: int, height: int, include_triple_letters: bool = False):
+    def load_random(
+        self,
+        width: int,
+        height: int,
+        include_triple_letters: bool = False
+    ):
         loaded_tiles: BoardTiles = []
-
-        alphabet = list("abcdefghijklmnopqrstuvwxyz")
 
         # Add random letters to the board
         for y in range(height):
@@ -69,24 +86,82 @@ class Board:
 
             for x in range(width):
                 loaded_row.append(
-                    Tile(choice(alphabet), x, y)
+                    Tile(choice(dictionary.alphabet), x, y)
                 )
-        
+
         # Apply modifiers to random selection of tiles
-        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.add(TileModifier.DOUBLE_WORD)
+        word_boost_tile = loaded_tiles[randint(0, height - 1)][randint(0, width - 1)]
+        word_boost_tile.modifiers.add(TileModifier.DOUBLE_WORD)
 
-        loaded_tiles[randint(0, height - 1)][randint(0, width - 1)].modifiers.add(TileModifier.DOUBLE_LETTER)
+        letter_boost_tile = loaded_tiles[randint(0, height - 1)][randint(0, width - 1)]
+        letter_boost_tile.modifiers.add(
+            TileModifier.TRIPLE_LETTER
+            if include_triple_letters
+            else TileModifier.DOUBLE_LETTER
+        )
 
-        if include_triple_letters:
-            while True:
-                target_tile = loaded_tiles[randint(0, height - 1)][randint(0, width - 1)]
+        # Apply gems to 10 random tiles
+        flat_packed_tiles = Board.flat_packed_tiles(loaded_tiles)
 
-                if TileModifier.DOUBLE_LETTER not in target_tile.modifiers:
-                    target_tile.modifiers.add(TileModifier.TRIPLE_LETTER)
-                    break
+        for i in range(10):
+            selected_tile = choice(flat_packed_tiles)
+            selected_tile.modifiers.add(TileModifier.GEM)
 
+            flat_packed_tiles.remove(selected_tile)
+
+        # Set tiles to randomised board
         self.tiles = loaded_tiles
-
+        
+       
+    def play_move(self, move: SearchNode):
+        tile_chain = [
+            self.tile_at(node.x, node.y) for node in move.chain()
+        ]
+        
+        gem_count = move.gem_count()
+        
+        # Change letters and redistribute letter boost
+        held_letter_boost = None
+        
+        for tile in tile_chain:
+            tile.letter = choice(dictionary.alphabet)
+            tile.modifiers.discard(TileModifier.GEM)
+            
+            if TileModifier.DOUBLE_LETTER in tile.modifiers:
+                held_letter_boost = TileModifier.DOUBLE_LETTER
+            elif TileModifier.TRIPLE_LETTER in tile.modifiers:
+                held_letter_boost = TileModifier.TRIPLE_LETTER
+                
+            tile.modifiers.discard(TileModifier.DOUBLE_LETTER)
+            tile.modifiers.discard(TileModifier.TRIPLE_LETTER)
+            
+        if held_letter_boost is not None:
+            selected_tile = choice(Board.flat_packed_tiles(self.tiles))
+            selected_tile.modifiers.add(held_letter_boost)
+            
+        # Redistribute gems to return to 10 total
+        for i in range(gem_count):
+            selected_tile = choice(tile_chain)
+            selected_tile.modifiers.add(TileModifier.GEM)
+            
+            tile_chain.remove(selected_tile)
+            
+        # Remove double word boost and redistribute
+        flat_packed_tiles = Board.flat_packed_tiles(self.tiles)
+        
+        for tile in flat_packed_tiles:
+            if TileModifier.DOUBLE_WORD in tile.modifiers:
+                tile.modifiers.discard(TileModifier.DOUBLE_WORD)
+                break
+                
+        choice(flat_packed_tiles).modifiers.add(
+            TileModifier.DOUBLE_WORD
+        )
+        
+        # Add gems, increment match round
+        self.gems += gem_count - (move.swap_count() * 3)
+        self.match_round += 1
+        
 
     def tile_at(self, x: int, y: int):
         try:
