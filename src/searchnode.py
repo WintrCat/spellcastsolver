@@ -79,7 +79,7 @@ class SearchNode(Tile):
         ])
     
 
-    def score(self):
+    def score(self, context = None):
         score = 0
         double_word_score = False
 
@@ -95,24 +95,45 @@ class SearchNode(Tile):
         if len(self.word()) >= 6:
             score += 10
 
+        if context is not None and context.match_round == 5:
+            score += self.gem_count()
+
         return score
 
 
     def estimated_long_term_score(self, context):
-        final_gem_count = (
-            context.gems + self.gem_count()
-            - (self.swap_count() * 3)
+        final_gem_count = min(
+            (
+                context.gems + self.gem_count()
+                - (self.swap_count() * 3)
+            ),
+            10
         )
 
         average_next_score = (
-            AVERAGE_SCORES[min(int(final_gem_count / 3), 3)]
+            AVERAGE_SCORES[min(final_gem_count // 3, 3)]
             - AVERAGE_SCORES[0]
+        )
+
+        gem_bracket = final_gem_count // 3
+        leftover_gem_value = int(
+            ((final_gem_count % 3) / 3) * (
+                AVERAGE_SCORES[min(gem_bracket + 1, 3)]
+                - AVERAGE_SCORES[gem_bracket]
+            )
         )
 
         if context.match_round == 5:
             average_next_score = 0
 
-        return self.score() + average_next_score
+        if context.match_round > 3:
+            leftover_gem_value = 0
+
+        return (
+            self.score()
+            + average_next_score
+            + leftover_gem_value
+        )
 
 
     def gem_count(self):
