@@ -15,11 +15,12 @@ A program that can find the top moves in any Discord Spellcast position. It supp
 The state of the Spellcast board is stored in `board.txt` and you will need to edit it such that it matches the board in your game. Here is an example board file:
 ```
 t*jfel
-iengv#
+i!engv#
 tan+lr
-iynim
-n+audo$
+iy!nim
+n+audo$!
 6
+3
 ```
 Letters with `$` after them are double word score.
 <br>
@@ -29,11 +30,11 @@ Letters with `*` after them are triple letter score.
 <br>
 Letters with `#` after them are frozen (cannot be used).
 <br>
-Letters with `g` after them have a gem attached. If you have gem management disabled, you can ignore this.
+Letters with `!` after them have a gem attached. If you have gem management disabled, you can ignore this.
 <br><br>
 You can chain modifiers if you want; e.g `t+$` for a `T` tile with double letter score and double word score at the same time.
 <br><br>
-The number on the last line is the number of gems you have available to spend on swaps. It may take several minutes to find moves with 3 swaps, so it is not recommended to specify 9 or more gems.
+There are two numbers that go at the bottom of the file. The first is the number of gems that you have in the position, and the second is the round number. The round number will only be used when gem management is enabled, so you can omit this if you have it disabled.
 
 ### Configuration
 There is a configuration file `config.json` where you can edit the bot's settings.
@@ -42,8 +43,8 @@ There is a configuration file `config.json` where you can edit the bot's setting
 `gemManagement` Toggles a gem management algorithm that when enabled will recommend moves that score less to collect more gems if it thinks you'll likely profit in the long term.
 
 ### Running
-Once you have configured your board file, you can run the program with `python main.py`. You will be given the best moves in the position and the co-ordinates of any swaps necessary to play the move. The first time you run the program will be slightly slower as it generates a prefix tree of the dictionary.
+Once you have configured your board file, you can run the program with `python main.py`. You will be given the best moves in the position and the co-ordinates of any swaps necessary to play the move.
 
 ## 📊 Benchmarking
 There is a script called `benchmark.py` which you can run to test the solver against a large
-number of randomised Spellcast boards. You will be given a small report on how it performed, and can configure the benchmark at the top section of the script.
+number of randomised Spellcast boards. You will be given a small report on how it performed, and can configure the benchmark at the top section of the script that it runs.

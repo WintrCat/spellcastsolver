@@ -39157,6 +39157,7 @@ footballs
 footboard
 footboards
 footboy
+footboys
 footbridge
 footbridges
 footcloth
@@ -70312,6 +70313,7 @@ paltriest
 paltriness
 paltry
 paludal
+paludinous
 paly
 pam
 pampa
@@ -78128,6 +78130,7 @@ protocols
 protohistories
 protohistory
 protohuman
+protohumans
 protolanguage
 protolithic
 protomartyr
@@ -79204,6 +79207,8 @@ pyxies
 pzazz
 q
 qadi
+qaimaqam
+qaimaqams
 qi
 qibla
 qindarka
