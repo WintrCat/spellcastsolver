@@ -4,7 +4,10 @@ from src.tile import Tile, TileModifier
 
 config = load(open("config.json"))
 
-AVERAGE_SCORES = [33, 57, 71, 83]
+# these values are derived from large benchmarks that processed
+# 50,000  5,000  500  100  boards respectively
+AVERAGE_SCORES = [30.2, 52.7, 65.9, 78.7]
+AVERAGE_NET_GEM_PROFITS = [2.8, 1, -0.8, -2.6]
 
 class SearchNode(Tile):
     parent: Self | None
@@ -129,11 +132,16 @@ class SearchNode(Tile):
         if context.match_round > 3:
             leftover_gem_value = 0
 
-        return (
+        return round(
             self.score()
             + average_next_score
-            + leftover_gem_value
+            + leftover_gem_value,
+            1
         )
+    
+
+    def net_gem_profit(self):
+        return self.gem_count() - (self.swap_count() * 3)
 
 
     def gem_count(self):

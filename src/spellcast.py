@@ -89,16 +89,25 @@ class Spellcast(Board):
             legal_move_word = legal_move_node.word()
             existing_move_node = unique_move_map.get(legal_move_word)
 
+            # if this move is not in the unique moves list
             if existing_move_node is None:
                 unique_move_map[legal_move_word] = legal_move_node
-            elif (
-                legal_move_node.score() > existing_move_node.score()
-                or (
-                    legal_move_node.score() == existing_move_node.score()
-                    and legal_move_node.swap_count() < existing_move_node.swap_count()
-                )
-            ):
+
+            # if the score of this move is better than existing one
+            elif legal_move_node.score() > existing_move_node.score():
                 unique_move_map[legal_move_word] = legal_move_node
+
+            # if the score is the same
+            elif legal_move_node.score() == existing_move_node.score():
+                # replace if this move requires less swaps
+                if legal_move_node.swap_count() < existing_move_node.swap_count():
+                    unique_move_map[legal_move_word] = legal_move_node
+                # replace if swaps are same but this move has more gems
+                elif (
+                    legal_move_node.swap_count() == existing_move_node.swap_count()
+                    and legal_move_node.gem_count() > existing_move_node.gem_count()
+                ):
+                    unique_move_map[legal_move_word] = legal_move_node
 
         legal_move_nodes = list(unique_move_map.values())
 

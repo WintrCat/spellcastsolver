@@ -1,2 +1,1 @@
-pygtrie
 typing_extensions

@@ -28,7 +28,7 @@ def main():
         game.load_random(5, 5)
 
         # Play game
-        for match_round in range(5):
+        for _ in range(5):
             moves = game.legal_moves(
                 sort_key=lambda node: node.estimated_long_term_score(game),
                 sort_reverse=True
