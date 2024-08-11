@@ -2,7 +2,7 @@ from time import time
 from src.spellcast import Spellcast
 
 ### CONFIGURATION ###
-GAME_COUNT = 1
+GAME_COUNT = 100
 #####################
 
 def main():

@@ -1,11 +1,12 @@
 from time import time
+import matplotlib.pyplot as plt
 from src.spellcast import Spellcast
 from src.searchnode import SearchNode
 
 ### CONFIGURATION ###
-BOARD_COUNT = 5000
+BOARD_COUNT = 1000
 TRIPLE_LETTER_TILES = False
-GEMS = 3
+GEMS = 0
 #####################
 
 
@@ -44,17 +45,45 @@ def main():
         1
     )
 
-    net_gem_profit_distribution = {}
-
-    for i in range(-9, 11):
-        net_gem_profit_distribution[str(i)] = 0
-
-    for move in best_moves:
-        net_gem_profit_string = str(move.net_gem_profit())
-        net_gem_profit_distribution[net_gem_profit_string] += 1
-
     best_move = max(*best_moves, key=lambda move: move.score())
     best_move_board = best_move_boards[best_moves.index(best_move)]
+
+    # plot distribution graphs
+    # score distribution
+    plt.xlabel("Score (Truncated)")
+    plt.ylabel("Frequency")
+
+    best_move_scores = [node.score() for node in best_moves]
+    unique_best_move_scores = list(set(best_move_scores))
+
+    plt.bar(
+        unique_best_move_scores,
+        [
+            best_move_scores.count(score)
+            for score in unique_best_move_scores
+        ]
+    )
+
+    plt.savefig("src/benchmarks/scores.png")
+    plt.clf()
+
+    # net gem profit distribution
+    plt.xlabel("Net Gem Profit")
+    plt.ylabel("Frequency")
+
+    best_move_gem_profits = [node.net_gem_profit() for node in best_moves]
+    unique_best_move_gem_profits = list(set(best_move_gem_profits))
+
+    plt.bar(
+        unique_best_move_gem_profits,
+        [
+            best_move_gem_profits.count(gem_profit)
+            for gem_profit in unique_best_move_gem_profits
+        ]
+    )
+
+    plt.savefig("src/benchmarks/net_gem_profits.png")
+    plt.clf()
 
     # display results
     print("\nBENCHMARK RESULTS")
@@ -83,14 +112,4 @@ def main():
     print(
         "The average net gem profit per move was "
         + str(average_net_gem_profit)
-    )
-    print(
-        "Net profit gem distribution:\n"
-        + "\n".join([
-            (
-                f"{net_gem_profit} gem profit - "
-                + f"{net_gem_profit_distribution[net_gem_profit]} occurences"
-            )
-            for net_gem_profit in net_gem_profit_distribution
-        ])
     )

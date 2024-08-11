@@ -29,6 +29,18 @@ class Spellcast(Board):
         while len(frontier) > 0:
             current_node = frontier.pop()
 
+            current_node_positions = set()
+            current_node_word = ""
+            current_node_swap_count = 0
+
+            for node in current_node.chain():
+                current_node_positions.add(str(node.x) + str(node.y))
+                current_node_word += node.letter
+                
+                if node.swap:
+                    current_node_swap_count += 1
+
+            # get tiles adjacent to current tile
             adjacent_tiles = self.adjacent_tiles(current_node.x, current_node.y)
 
             for adjacent_tile in adjacent_tiles:
@@ -37,37 +49,41 @@ class Spellcast(Board):
                     continue
 
                 # If the adjacent node is part of the current node's chain, skip it
-                if current_node.chain_contains(adjacent_tile.x, adjacent_tile.y):
+                serialised_position = str(adjacent_tile.x) + str(adjacent_tile.y)
+                if serialised_position in current_node_positions:
                     continue
 
                 # Create search node from adjacent tile
                 adjacent_node = SearchNode(current_node, adjacent_tile)
-                adjacent_word = adjacent_node.word()
+                adjacent_word = current_node_word + adjacent_node.letter
 
                 # If the adjacent node makes a valid word, record it
                 if dictionary.has_word(adjacent_word):
                     legal_move_nodes.append(adjacent_node)
 
-                # If no words start with this branch, add possible swaps
+                # add branch if words can begin with this prefix
                 if dictionary.has_prefix(adjacent_word):
                     frontier.append(adjacent_node)
-                elif self.gems >= (current_node.swap_count() + 1) * 3:                    
-                    for letter in dictionary.alphabet:
-                        if letter == adjacent_node.letter:
-                            continue
 
-                        current_word = adjacent_word[:-1]
-                        if not dictionary.has_prefix(current_word + letter):
-                            continue
+                # add possible swaps if there are words
+                if self.gems < (current_node_swap_count + 1) * 3:
+                    continue
 
-                        swap_node = SearchNode(
-                            current_node,
-                            adjacent_tile,
-                            True
-                        )
-                        swap_node.letter = letter
-                        
-                        frontier.append(swap_node)
+                for letter in dictionary.alphabet:
+                    if letter == adjacent_node.letter:
+                        continue
+
+                    if not dictionary.has_prefix(current_node_word + letter):
+                        continue
+
+                    swap_node = SearchNode(
+                        current_node,
+                        adjacent_tile,
+                        True
+                    )
+                    swap_node.letter = letter
+                    
+                    frontier.append(swap_node)        
 
         return list(legal_move_nodes)
     
@@ -87,27 +103,36 @@ class Spellcast(Board):
         unique_move_map: dict[str, SearchNode] = {}
         for legal_move_node in legal_move_nodes:
             legal_move_word = legal_move_node.word()
+            legal_move_score = legal_move_node.score()
+            legal_move_swap_count = legal_move_node.swap_count()
+
             existing_move_node = unique_move_map.get(legal_move_word)
 
             # if this move is not in the unique moves list
             if existing_move_node is None:
                 unique_move_map[legal_move_word] = legal_move_node
+                continue
+
+            existing_move_score = existing_move_node.score()
+            existing_move_swap_count = existing_move_node.swap_count()
 
             # if the score of this move is better than existing one
-            elif legal_move_node.score() > existing_move_node.score():
+            if legal_move_score > existing_move_score:
                 unique_move_map[legal_move_word] = legal_move_node
+                continue
+            elif legal_move_score < existing_move_score:
+                continue
+            
+            # replace if this move requires less swaps
+            if legal_move_swap_count < existing_move_swap_count:
+                unique_move_map[legal_move_word] = legal_move_node
+                continue
+            elif legal_move_swap_count > existing_move_swap_count:
+                continue
 
-            # if the score is the same
-            elif legal_move_node.score() == existing_move_node.score():
-                # replace if this move requires less swaps
-                if legal_move_node.swap_count() < existing_move_node.swap_count():
-                    unique_move_map[legal_move_word] = legal_move_node
-                # replace if swaps are same but this move has more gems
-                elif (
-                    legal_move_node.swap_count() == existing_move_node.swap_count()
-                    and legal_move_node.gem_count() > existing_move_node.gem_count()
-                ):
-                    unique_move_map[legal_move_word] = legal_move_node
+            # replace if swaps are same but this move has more gems
+            if legal_move_node.gem_count() > existing_move_node.gem_count():
+                unique_move_map[legal_move_word] = legal_move_node
 
         legal_move_nodes = list(unique_move_map.values())
 

@@ -1,1 +1,2 @@
 typing_extensions
+matplotlib

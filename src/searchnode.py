@@ -9,6 +9,7 @@ config = load(open("config.json"))
 AVERAGE_SCORES = [30.2, 52.7, 65.9, 78.7]
 AVERAGE_NET_GEM_PROFITS = [2.8, 1, -0.8, -2.6]
 
+
 class SearchNode(Tile):
     parent: Self | None
 
@@ -17,6 +18,7 @@ class SearchNode(Tile):
     y: int
 
     swap: bool
+    
 
     def __init__(self, parent: Self, tile: Tile, swap: bool = False):
         super().__init__(tile.letter, tile.x, tile.y)
