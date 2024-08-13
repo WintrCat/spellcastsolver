@@ -1,10 +1,21 @@
-# Spellcast Solver
+# 🌹 Spellcast Solver
 
-A program that can find the top moves in any Discord Spellcast position. It supports the different tile score boosts, frozen tiles for Singleplayer levels, and can find moves that utilise swap boosts.
+The strongest Discord Spellcast engine in the world (probably).
+
+The program is able to find the best moves on any Spellcast board and supports:
+- Tile boosts like double word and letter score etc.
+- Frozen tiles for use in the Adventure mode
+- Moves that use 1 to 3 tile swaps
+- Trading points for gems for a long-term advantage
+
+## 📈 Results
+- 2v2's mode combined score world record holder with 604 points
+- High score achieved in solo games of 356 points
+- Average score of 55 points per 1-swap move, 71 points for 2 swaps
 
 ## 🚀 Running
 ### Prerequisites
-- Python installed (3.12.1 was used in development)
+- Python 3.10+ installed (older ones *should* be okay too)
 - Basic experience with using a terminal
 
 ### Setup
@@ -39,12 +50,19 @@ There are two numbers that go at the bottom of the file. The first is the number
 ### Configuration
 There is a configuration file `config.json` where you can edit the bot's settings.
 
-`movesShown` The number of top moves that are shown. Defaults to 10.
+`movesShown` The number of top moves that are shown.<br>
 `gemManagement` Toggles a gem management algorithm that when enabled will recommend moves that score less to collect more gems if it thinks you'll likely profit in the long term.
 
 ### Running
 Once you have configured your board file, you can run the program with `python main.py`. You will be given the best moves in the position and the co-ordinates of any swaps necessary to play the move.
 
+### Improving performance
+Searching for moves on a Spellcast board, especially those that require 2 or 3 swaps to execute, can take a significant amount of time because of the sheer number of combinations that need checking. I personally recommend that you use an alternative Python runtime like [PyPy](https://pypy.org/) when using the solver in a real-world situation; it can sometimes improve performance by around 7x.
+
 ## 📊 Benchmarking
-There is a script called `benchmark.py` which you can run to test the solver against a large
-number of randomised Spellcast boards. You will be given a small report on how it performed, and can configure the benchmark at the top section of the script that it runs.
+There is a script called `benchmark.py` which you can use to run various benchmarks for the solver. It takes one command-line argument which is the type of benchmark you want to run; this can be one of the following values:
+
+- `boards` Generates a specified number of random Spellcast boards, and finds the top move on them. Provides data on the average score per move, average gems received etc.
+- `games` Generates a specified number of entire Spellcast games. An initial random board is created, and the top moves are simulated therein.
+
+You can configure each benchmark by going into the `src/benchmarks` folder, finding the script behind the particular benchmark and editing the configuration variables at the top of the file.
