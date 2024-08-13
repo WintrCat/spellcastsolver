@@ -103,7 +103,7 @@ class Board:
         # Apply gems to 10 random tiles
         flat_packed_tiles = Board.flat_packed_tiles(loaded_tiles)
 
-        for i in range(10):
+        for _ in range(10):
             selected_tile = choice(flat_packed_tiles)
             selected_tile.modifiers.add(TileModifier.GEM)
 
@@ -140,7 +140,7 @@ class Board:
             selected_tile.modifiers.add(held_letter_boost)
             
         # Redistribute gems to return to 10 total
-        for i in range(gem_count):
+        for _ in range(gem_count):
             selected_tile = choice(tile_chain)
             selected_tile.modifiers.add(TileModifier.GEM)
             

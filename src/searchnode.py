@@ -10,6 +10,13 @@ AVERAGE_SCORES = [30.2, 55.3, 71.1, 82.7]
 AVERAGE_NET_GEM_PROFITS = [2.8, 0.8, -1.1, -3.2]
 
 
+class SearchNodeAttribute:
+    WORD = 0
+    POSITIONS = 1
+    SWAP_COUNT = 2
+    GEM_COUNT = 3
+
+
 class SearchNode(Tile):
     parent: Self | None
 
@@ -107,40 +114,19 @@ class SearchNode(Tile):
 
 
     def estimated_long_term_score(self, context):
-        final_gem_count = min(
-            (
-                context.gems + self.gem_count()
-                - (self.swap_count() * 3)
-            ),
-            10
-        )
+        # simulate rounds with average scores
+        simulated_gems = min(context.gems + self.net_gem_profit(), 10)
+        simulated_score = self.score()
 
-        average_next_score = (
-            AVERAGE_SCORES[min(final_gem_count // 3, 3)]
-            - AVERAGE_SCORES[0]
-        )
+        for _ in range(5 - context.match_round):
+            available_swaps = int(simulated_gems / 3)
 
-        gem_bracket = final_gem_count // 3
-        leftover_gem_value = int(
-            ((final_gem_count % 3) / 3) * (
-                AVERAGE_SCORES[min(gem_bracket + 1, 3)]
-                - AVERAGE_SCORES[gem_bracket]
-            )
-        )
+            simulated_score += AVERAGE_SCORES[available_swaps]
+            simulated_gems += AVERAGE_NET_GEM_PROFITS[available_swaps]
 
-        if context.match_round == 5:
-            average_next_score = 0
+        # return long term value
+        return round(simulated_score, 1)
 
-        if context.match_round > 3:
-            leftover_gem_value = 0
-
-        return round(
-            self.score()
-            + average_next_score
-            + leftover_gem_value,
-            1
-        )
-    
 
     def net_gem_profit(self):
         return self.gem_count() - (self.swap_count() * 3)

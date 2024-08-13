@@ -9,6 +9,8 @@ config = load(open("config.json"))
 game = Spellcast()
 game.load_file("board.txt")
 
+print("searching for moves...")
+
 best_moves = game.legal_moves(lambda node: (
     node.estimated_long_term_score(game)
     if config["gemManagement"]

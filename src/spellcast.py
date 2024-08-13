@@ -29,16 +29,19 @@ class Spellcast(Board):
         while len(frontier) > 0:
             current_node = frontier.pop()
 
-            current_node_positions = set()
-            current_node_word = ""
-            current_node_swap_count = 0
+            # cache current node information
+            current_node_cache = {
+                "word": "",
+                "positions": set(),
+                "swap_count": 0
+            }
 
             for node in current_node.chain():
-                current_node_positions.add(str(node.x) + str(node.y))
-                current_node_word += node.letter
+                current_node_cache["positions"].add(str(node.x) + str(node.y))
+                current_node_cache["word"] += node.letter
                 
                 if node.swap:
-                    current_node_swap_count += 1
+                    current_node_cache["swap_count"] += 1
 
             # get tiles adjacent to current tile
             adjacent_tiles = self.adjacent_tiles(current_node.x, current_node.y)
@@ -50,12 +53,12 @@ class Spellcast(Board):
 
                 # If the adjacent node is part of the current node's chain, skip it
                 serialised_position = str(adjacent_tile.x) + str(adjacent_tile.y)
-                if serialised_position in current_node_positions:
+                if serialised_position in current_node_cache["positions"]:
                     continue
 
                 # Create search node from adjacent tile
                 adjacent_node = SearchNode(current_node, adjacent_tile)
-                adjacent_word = current_node_word + adjacent_node.letter
+                adjacent_word = current_node_cache["word"] + adjacent_node.letter
 
                 # If the adjacent node makes a valid word, record it
                 if dictionary.has_word(adjacent_word):
@@ -66,14 +69,14 @@ class Spellcast(Board):
                     frontier.append(adjacent_node)
 
                 # add possible swaps if there are enough gems
-                if self.gems < (current_node_swap_count + 1) * 3:
+                if self.gems < (current_node_cache["swap_count"] + 1) * 3:
                     continue
 
-                for letter in dictionary.alphabet:
+                for swap_letter in dictionary.alphabet:
                     if letter == adjacent_node.letter:
                         continue
 
-                    if not dictionary.has_prefix(current_node_word + letter):
+                    if not dictionary.has_prefix(current_node_cache["word"] + swap_letter):
                         continue
 
                     swap_node = SearchNode(
@@ -81,7 +84,7 @@ class Spellcast(Board):
                         adjacent_tile,
                         True
                     )
-                    swap_node.letter = letter
+                    swap_node.letter = swap_letter
                     
                     frontier.append(swap_node)        
 
@@ -102,9 +105,17 @@ class Spellcast(Board):
         # Remove duplicates, only keeping the best copies of each word
         unique_move_map: dict[str, SearchNode] = {}
         for legal_move_node in legal_move_nodes:
-            legal_move_word = legal_move_node.word()
+            # cache legal move node attributes
+            legal_move_word = ""
+            legal_move_swap_count = 0
+
+            for node in legal_move_node.chain():
+                legal_move_word += node.letter
+                
+                if node.swap:
+                    legal_move_swap_count += 1
+
             legal_move_score = legal_move_node.score()
-            legal_move_swap_count = legal_move_node.swap_count()
 
             existing_move_node = unique_move_map.get(legal_move_word)
 
