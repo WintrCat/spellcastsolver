@@ -65,7 +65,7 @@ class Spellcast(Board):
                 if dictionary.has_prefix(adjacent_word):
                     frontier.append(adjacent_node)
 
-                # add possible swaps if there are words
+                # add possible swaps if there are enough gems
                 if self.gems < (current_node_swap_count + 1) * 3:
                     continue
 

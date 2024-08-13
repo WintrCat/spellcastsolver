@@ -4,9 +4,9 @@ from src.spellcast import Spellcast
 from src.searchnode import SearchNode
 
 ### CONFIGURATION ###
-BOARD_COUNT = 1000
+BOARD_COUNT = 100
 TRIPLE_LETTER_TILES = False
-GEMS = 0
+GEMS = 9
 #####################
 
 

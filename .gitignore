@@ -1,2 +1,3 @@
 src/**/__pycache__
 *.pkl
+src/benchmarks/*.png

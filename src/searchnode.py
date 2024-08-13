@@ -5,9 +5,9 @@ from src.tile import Tile, TileModifier
 config = load(open("config.json"))
 
 # these values are derived from large benchmarks that processed
-# 50,000  5,000  500  100  boards respectively
-AVERAGE_SCORES = [30.2, 52.7, 65.9, 78.7]
-AVERAGE_NET_GEM_PROFITS = [2.8, 1, -0.8, -2.6]
+# 50,000  50,000  3,000  100  boards respectively
+AVERAGE_SCORES = [30.2, 55.3, 71.1, 82.7]
+AVERAGE_NET_GEM_PROFITS = [2.8, 0.8, -1.1, -3.2]
 
 
 class SearchNode(Tile):

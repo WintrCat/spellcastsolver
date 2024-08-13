@@ -2,9 +2,9 @@ from time import time
 from json import load
 from src.spellcast import Spellcast
 
-config = load(open("config.json"))
-
 start_time = time()
+
+config = load(open("config.json"))
 
 game = Spellcast()
 game.load_file("board.txt")
