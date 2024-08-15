@@ -4,26 +4,15 @@ from src.tile import Tile, TileModifier
 
 config = load(open("config.json"))
 
-# these values are derived from large benchmarks that processed
-# 50,000  50,000  3,000  100  boards respectively
-AVERAGE_SCORES = [30.2, 55.3, 71.1, 82.7]
-AVERAGE_NET_GEM_PROFITS = [2.8, 0.8, -1.1, -3.2]
-
-
-class SearchNodeAttribute:
-    WORD = 0
-    POSITIONS = 1
-    SWAP_COUNT = 2
-    GEM_COUNT = 3
+# these values are derived from large benchmarks
+AVERAGE_SCORES = [32.7, 57.5, 74, 86]
+AVERAGE_NET_GEM_PROFITS = [2.8, 1, -0.8, -2.6]
 
 
 class SearchNode(Tile):
     parent: Self | None
 
     letter: str
-    x: int
-    y: int
-
     swap: bool
     
 
@@ -95,11 +84,15 @@ class SearchNode(Tile):
         score = 0
         double_word_score = False
 
+        gem_count = 0
         for chain_node in self.chain():
             score += chain_node.value()
 
             if TileModifier.DOUBLE_WORD in chain_node.modifiers:
                 double_word_score = True
+
+            if TileModifier.GEM in chain_node.modifiers:
+                gem_count += 1
 
         if double_word_score:
             score *= 2
@@ -108,7 +101,7 @@ class SearchNode(Tile):
             score += 10
 
         if context is not None and context.match_round == 5:
-            score += self.gem_count()
+            score += gem_count
 
         return score
 

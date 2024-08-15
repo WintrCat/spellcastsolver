@@ -106,22 +106,24 @@ class Spellcast(Board):
         unique_move_map: dict[str, SearchNode] = {}
         for legal_move_node in legal_move_nodes:
             # cache legal move node attributes
-            legal_move_word = ""
-            legal_move_swap_count = 0
+            legal_move_cache = {
+                "word": "",
+                "swap_count": 0
+            }
 
             for node in legal_move_node.chain():
-                legal_move_word += node.letter
+                legal_move_cache["word"] += node.letter
                 
                 if node.swap:
-                    legal_move_swap_count += 1
+                    legal_move_cache["swap_count"] += 1
 
             legal_move_score = legal_move_node.score()
 
-            existing_move_node = unique_move_map.get(legal_move_word)
+            # assert that a move with this word already exists
+            existing_move_node = unique_move_map.get(legal_move_cache["word"])
 
-            # if this move is not in the unique moves list
             if existing_move_node is None:
-                unique_move_map[legal_move_word] = legal_move_node
+                unique_move_map[legal_move_cache["word"]] = legal_move_node
                 continue
 
             existing_move_score = existing_move_node.score()
@@ -129,21 +131,21 @@ class Spellcast(Board):
 
             # if the score of this move is better than existing one
             if legal_move_score > existing_move_score:
-                unique_move_map[legal_move_word] = legal_move_node
+                unique_move_map[legal_move_cache["word"]] = legal_move_node
                 continue
             elif legal_move_score < existing_move_score:
                 continue
             
             # replace if this move requires less swaps
-            if legal_move_swap_count < existing_move_swap_count:
-                unique_move_map[legal_move_word] = legal_move_node
+            if legal_move_cache["swap_count"] < existing_move_swap_count:
+                unique_move_map[legal_move_cache["word"]] = legal_move_node
                 continue
-            elif legal_move_swap_count > existing_move_swap_count:
+            elif legal_move_cache["swap_count"] > existing_move_swap_count:
                 continue
 
             # replace if swaps are same but this move has more gems
             if legal_move_node.gem_count() > existing_move_node.gem_count():
-                unique_move_map[legal_move_word] = legal_move_node
+                unique_move_map[legal_move_cache["word"]] = legal_move_node
 
         legal_move_nodes = list(unique_move_map.values())
 

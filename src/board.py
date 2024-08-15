@@ -8,7 +8,7 @@ BoardTiles = list[list[Tile]]
 class Board:
     tiles: BoardTiles
     gems: int = 0
-    match_round: int = 0
+    match_round: int = 1
 
 
     def flat_packed_tiles(tiles: BoardTiles):

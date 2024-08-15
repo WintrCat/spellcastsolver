@@ -1,12 +1,13 @@
 from time import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from src.spellcast import Spellcast
 from src.searchnode import SearchNode
 
 ### CONFIGURATION ###
 BOARD_COUNT = 1000
 TRIPLE_LETTER_TILES = False
-GEMS = 0
+GEMS = 4
+MATCH_ROUND = 1
 #####################
 
 
@@ -23,9 +24,14 @@ def main():
         board = Spellcast()
 
         board.gems = GEMS
+        board.match_round = MATCH_ROUND
         board.load_random(5, 5, TRIPLE_LETTER_TILES)
 
-        top_moves = board.legal_moves(lambda node: node.estimated_long_term_score(board))
+        top_moves = board.legal_moves(lambda node: (
+            node.estimated_long_term_score(board)
+            if board.match_round < 5
+            else node.score(board)
+        ))
 
         best_moves.append(top_moves[0])
         best_move_boards.append(board)
@@ -50,40 +56,40 @@ def main():
 
     # plot distribution graphs
     # score distribution
-    plt.xlabel("Score (Truncated)")
-    plt.ylabel("Frequency")
+    # plt.xlabel("Score (Truncated)")
+    # plt.ylabel("Frequency")
 
-    best_move_scores = [node.score() for node in best_moves]
-    unique_best_move_scores = list(set(best_move_scores))
+    # best_move_scores = [node.score() for node in best_moves]
+    # unique_best_move_scores = list(set(best_move_scores))
 
-    plt.bar(
-        unique_best_move_scores,
-        [
-            best_move_scores.count(score)
-            for score in unique_best_move_scores
-        ]
-    )
+    # plt.bar(
+    #     unique_best_move_scores,
+    #     [
+    #         best_move_scores.count(score)
+    #         for score in unique_best_move_scores
+    #     ]
+    # )
 
-    plt.savefig("src/benchmarks/scores.png")
-    plt.clf()
+    # plt.savefig("src/benchmarks/scores.png")
+    # plt.clf()
 
-    # net gem profit distribution
-    plt.xlabel("Net Gem Profit")
-    plt.ylabel("Frequency")
+    # # net gem profit distribution
+    # plt.xlabel("Net Gem Profit")
+    # plt.ylabel("Frequency")
 
-    best_move_gem_profits = [node.net_gem_profit() for node in best_moves]
-    unique_best_move_gem_profits = list(set(best_move_gem_profits))
+    # best_move_gem_profits = [node.net_gem_profit() for node in best_moves]
+    # unique_best_move_gem_profits = list(set(best_move_gem_profits))
 
-    plt.bar(
-        unique_best_move_gem_profits,
-        [
-            best_move_gem_profits.count(gem_profit)
-            for gem_profit in unique_best_move_gem_profits
-        ]
-    )
+    # plt.bar(
+    #     unique_best_move_gem_profits,
+    #     [
+    #         best_move_gem_profits.count(gem_profit)
+    #         for gem_profit in unique_best_move_gem_profits
+    #     ]
+    # )
 
-    plt.savefig("src/benchmarks/net_gem_profits.png")
-    plt.clf()
+    # plt.savefig("src/benchmarks/net_gem_profits.png")
+    # plt.clf()
 
     # display results
     print("\nBENCHMARK RESULTS")
