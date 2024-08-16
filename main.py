@@ -17,6 +17,11 @@ best_moves = game.legal_moves(lambda node: (
     else node.score()
 ))
 
+shuffle_score, shuffle_recommended = game.evaluate_shuffle(best_moves[0])
+
+if shuffle_recommended:
+    print(f"engine recommends shuffling - {shuffle_score} estimated points")
+
 print("\n".join([
     f"{i + 1} > {node.to_string(game)}"
     for i, node in enumerate(

@@ -1,12 +1,9 @@
 from typing_extensions import Self
 from json import load
 from src.tile import Tile, TileModifier
+from src.gems import AVERAGE_SCORES, gem_value
 
 config = load(open("config.json"))
-
-# these values are derived from large benchmarks
-AVERAGE_SCORES = [32.7, 57.5, 74, 86]
-AVERAGE_NET_GEM_PROFITS = [2.8, 1, -0.8, -2.6]
 
 
 class SearchNode(Tile):
@@ -37,7 +34,7 @@ class SearchNode(Tile):
         swap_details = ", ".join(swap_strings)
 
         return (
-            f"{self.word()} - {self.score()} points, "
+            f"{self.word()} - {self.score(context)} points, "
             + f"{self.gem_count()} gems"
             + (" - " if len(swap_strings) > 0 else "")
             + swap_details
@@ -107,18 +104,17 @@ class SearchNode(Tile):
 
 
     def estimated_long_term_score(self, context):
-        # simulate rounds with average scores
-        simulated_gems = min(context.gems + self.net_gem_profit(), 10)
-        simulated_score = self.score()
+        long_term_score = self.score(context)
 
-        for _ in range(5 - context.match_round):
-            available_swaps = int(simulated_gems / 3)
+        final_gem_count = min(10, context.gems + self.net_gem_profit())
 
-            simulated_score += AVERAGE_SCORES[available_swaps]
-            simulated_gems += AVERAGE_NET_GEM_PROFITS[available_swaps]
+        if context.match_round < 5:  
+            long_term_score += AVERAGE_SCORES[final_gem_count // 3]
 
-        # return long term value
-        return round(simulated_score, 1)
+        if context.match_round < 4:
+            long_term_score += gem_value(final_gem_count)
+
+        return long_term_score
 
 
     def net_gem_profit(self):

@@ -90194,6 +90194,7 @@ shuck
 shucked
 shucker
 shucking
+shuckings
 shucks
 shuckses
 shudder
@@ -111439,6 +111440,7 @@ woodcutters
 woodcutting
 wooded
 wooden
+woodened
 woodener
 woodenest
 woodenhead

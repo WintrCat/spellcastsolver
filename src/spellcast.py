@@ -2,6 +2,7 @@ from collections import deque
 from src.board import Board
 from src.tile import TileModifier
 from src.searchnode import SearchNode
+from src.gems import AVERAGE_SCORES, AVERAGE_NET_GEM_PROFITS, gem_value
 import src.dictionary as dictionary
 
 class Spellcast(Board):
@@ -37,7 +38,9 @@ class Spellcast(Board):
             }
 
             for node in current_node.chain():
-                current_node_cache["positions"].add(str(node.x) + str(node.y))
+                current_node_cache["positions"].add(
+                    "".join([str(node.x), str(node.y)])
+                )
                 current_node_cache["word"] += node.letter
                 
                 if node.swap:
@@ -52,7 +55,7 @@ class Spellcast(Board):
                     continue
 
                 # If the adjacent node is part of the current node's chain, skip it
-                serialised_position = str(adjacent_tile.x) + str(adjacent_tile.y)
+                serialised_position = "".join([str(adjacent_tile.x), str(adjacent_tile.y)])
                 if serialised_position in current_node_cache["positions"]:
                     continue
 
@@ -154,3 +157,41 @@ class Spellcast(Board):
             legal_move_nodes.sort(key=sort_key, reverse=sort_reverse)
 
         return legal_move_nodes
+    
+
+    def evaluate_shuffle(self, top_move: SearchNode) -> tuple[int, bool]:
+        if self.gems == 0:
+            return (0, False)
+
+        simulated_score = 0
+        simulated_gems = self.gems - 1
+        next_round_gem_count = 0
+
+        # simulate a shuffle and the next round
+        for round_index in range(min(2, 6 - self.match_round)):
+            simulated_score += AVERAGE_SCORES[int(simulated_gems / 3)]
+            simulated_gems += AVERAGE_NET_GEM_PROFITS[int(simulated_gems / 3)]
+            
+            if round_index == 0:
+                next_round_gem_count = simulated_gems
+
+        # add value of leftover gems
+        if self.match_round < 4:
+            simulated_score += gem_value(next_round_gem_count)
+
+        # add value of remaining gems for last round
+        if self.match_round == 5:
+            simulated_score += simulated_gems
+
+        # get value of the spent shuffle gem
+        shuffle_gem_value = gem_value(self.gems) - gem_value(self.gems - 1)
+
+        # return the estimated long term score and
+        # whether a shuffling recommendation should be made
+        return (
+            simulated_score,
+            simulated_score > (
+                top_move.estimated_long_term_score(self)
+                + shuffle_gem_value
+            )
+        )
