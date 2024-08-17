@@ -7112,6 +7112,7 @@ azotes
 azoth
 azotic
 azotize
+azotizes
 azotobacter
 azure
 azures
@@ -17243,6 +17244,7 @@ chromium
 chromo
 chromogen
 chromogenic
+chromogens
 chromolithograph
 chromolithographies
 chromolithography
@@ -64461,6 +64463,7 @@ mythically
 mythicism
 mythicist
 mythicize
+mythicizer
 mythify
 mythmaker
 mythmaking
@@ -68087,6 +68090,7 @@ oquassa
 or
 ora
 oracle
+oracled
 oracles
 oracular
 oracularity
