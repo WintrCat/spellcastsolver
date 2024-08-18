@@ -7,6 +7,7 @@ The program is able to find the best moves on any Spellcast board and supports:
 - Frozen tiles for use in the Adventure mode
 - Moves that use 1 to 3 tile swaps
 - Trading points for gems for a long-term advantage
+- Recommending shuffling on low-scoring boards
 
 ## 📈 Results
 - 2v2's mode combined score world record holder with 604 points
