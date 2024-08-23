@@ -96615,6 +96615,7 @@ goodbye
 goodbyes
 goodbys
 goodfaced
+goodfellas
 goodfellow
 goodfellows
 goodfellowship
