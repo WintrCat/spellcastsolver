@@ -50,11 +50,6 @@ class SearchNode(Tile):
                 )
                 else ""
             )
-            + (
-                f"\n{self.pretty_word()}\n"
-                if config["prettyPrint"]
-                else ""
-            )
         )
 
 
@@ -74,26 +69,6 @@ class SearchNode(Tile):
             
         return False
     
-
-    def pretty_word(self):
-        # ANSI escape codes for colors
-        RED = '\033[91m'
-        RESET = '\033[0m'
-        board = [(['█'] * 5) for _ in range(5)]
-
-        for chain_node in self.chain():
-            x, y = chain_node.x, chain_node.y
-
-            if chain_node.swap:
-                board[y][x] = f"{RED}{chain_node.letter}{RESET}"
-            else:
-                board[y][x] = chain_node.letter
-
-        return "\n".join([
-            " ".join(row)
-            for row in board
-        ])
-
 
     def word(self):
         return "".join([
