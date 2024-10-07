@@ -11,7 +11,7 @@ The program is able to find the best moves on any Spellcast board and supports:
 
 ## 📈 Results
 - 2v2's mode team score world record holder with 605 points
-- 2v2's game between 4 engines: world record total combined score of 1,209 points
+- 2v2's game between 4 engines: world record total combined score of 1,206 points
 - High score achieved in solo games of 356 points
 - Average score of 57 points per 1-swap move, 74 points for 2 swaps
 
