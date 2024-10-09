@@ -76,7 +76,7 @@ class Spellcast(Board):
                     continue
 
                 for swap_letter in dictionary.alphabet:
-                    if letter == adjacent_node.letter:
+                    if swap_letter == adjacent_node.letter:
                         continue
 
                     if not dictionary.has_prefix(current_node_cache["word"] + swap_letter):
