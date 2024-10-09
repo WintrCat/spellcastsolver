@@ -53,7 +53,8 @@ There are two numbers that go at the bottom of the file. The first is the number
 There is a configuration file `config.json` where you can edit the bot's settings.
 
 `movesShown` The number of top moves that are shown.<br>
-`gemManagement` Toggles a gem management algorithm that when enabled will recommend moves that score less to collect more gems if it thinks you'll likely profit in the long term.
+`gemManagement` Toggles a gem management algorithm that when enabled will recommend moves that score less to collect more gems if it thinks you'll likely profit in the long term.<br>
+`prettyPrint` For each move, shows a 5x5 board that highlights the move. Swaps are marked in red.
 
 ### Running
 Once you have configured your board file, you can run the program with `python main.py`. You will be given the best moves in the position and the co-ordinates of any swaps necessary to play the move.
