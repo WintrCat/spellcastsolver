@@ -1,4 +1,5 @@
 {
     "movesShown": 5,
-    "gemManagement": true
+    "gemManagement": true,
+    "prettyPrint": false
 }
