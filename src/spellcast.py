@@ -4,6 +4,11 @@ from src.tile import TileModifier
 from src.searchnode import SearchNode
 from src.gems import AVERAGE_SCORES, AVERAGE_NET_GEM_PROFITS, gem_value
 import src.dictionary as dictionary
+from json import load
+from multiprocessing import Pool
+
+config = load(open("config.json"))
+
 
 class Spellcast(Board):
     def legal_moves_from(self, x: int, y: int):
@@ -98,12 +103,25 @@ class Spellcast(Board):
         legal_move_nodes: list[SearchNode] = []
 
         # Record all legal moves from all root tiles on the board
-        for y in range(len(self.tiles)):
-            for x in range(len(self.tiles[y])):
-                if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
-                    continue
-                
-                legal_move_nodes += self.legal_moves_from(x, y)
+        if config['multiProcessing']:
+            with Pool() as pool:
+                results = []
+                for y in range(len(self.tiles)):
+                    for x in range(len(self.tiles[y])):
+                        if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
+                            continue
+                        
+                        results.append(pool.apply_async(self.legal_moves_from, (x, y)))
+                        
+                for result in results:
+                    legal_move_nodes.extend(result.get())
+        else:
+            for y in range(len(self.tiles)):
+                for x in range(len(self.tiles[y])):
+                    if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
+                        continue
+                    
+                    legal_move_nodes += self.legal_moves_from(x, y)
 
         # Remove duplicates, only keeping the best copies of each word
         unique_move_map: dict[str, SearchNode] = {}
