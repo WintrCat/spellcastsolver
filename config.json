@@ -1,5 +1,6 @@
 {
     "movesShown": 5,
     "gemManagement": true,
-    "prettyPrint": false
+    "prettyPrint": false,
+    "multiProcessing": false
 }
