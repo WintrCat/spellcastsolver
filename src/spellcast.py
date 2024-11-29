@@ -103,7 +103,7 @@ class Spellcast(Board):
         legal_move_nodes: list[SearchNode] = []
 
         # Record all legal moves from all root tiles on the board
-        if config['multiProcessing']:
+        if config["multiProcessing"]:
             with Pool() as pool:
                 results = []
                 for y in range(len(self.tiles)):
@@ -111,7 +111,11 @@ class Spellcast(Board):
                         if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
                             continue
                         
-                        results.append(pool.apply_async(self.legal_moves_from, (x, y)))
+                        results.append(
+                            pool.apply_async(
+                                self.legal_moves_from, (x, y)
+                            )
+                        )
                         
                 for result in results:
                     legal_move_nodes.extend(result.get())
