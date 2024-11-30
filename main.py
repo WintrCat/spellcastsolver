@@ -24,12 +24,21 @@ def compare_moves(a: SearchNode, b: SearchNode):
 
 if __name__ == "__main__":
     print("searching for moves...")
-    
+
     best_moves = game.legal_moves(
         cmp_to_key(compare_moves)
         if config["gemManagement"]
         else SearchNode.score
     )
+
+    if config["logResults"]:
+        found_words = [move.word() for move in best_moves]
+        found_words.sort(reverse=True, key=len)
+
+        log_file = open("results.log", "w")
+
+        log_file.write("\n".join(found_words))
+        log_file.close()
 
     shuffle_score, shuffle_recommended = game.evaluate_shuffle(best_moves[0])
 

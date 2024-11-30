@@ -54,6 +54,7 @@ There is a configuration file `config.json` where you can edit the bot's setting
 
 - `movesShown` The number of top moves that are shown.<br>
 - `verboseOutput` Moves are shown with a grid that highlights the used tiles.
+- `logResults` Records all found words ordered by length in a log file.
 - `gemManagement` Toggles a gem management algorithm that when enabled will recommend moves that score less to collect more gems if it thinks you'll likely profit in the long term.<br>
 - `multiProcessing` Spawns multiple Python processes to attempt to improve performance.
 

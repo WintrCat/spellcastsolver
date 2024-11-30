@@ -1,6 +1,7 @@
 {
     "movesShown": 5,
-    "verboseOutput": false,
+    "verboseOutput": true,
+    "logResults": false,
     "gemManagement": true,
     "multiProcessing": true
 }
