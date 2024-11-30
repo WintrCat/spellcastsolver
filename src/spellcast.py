@@ -103,29 +103,27 @@ class Spellcast(Board):
         legal_move_nodes: list[SearchNode] = []
 
         # Record all legal moves from all root tiles on the board
-        if config["multiProcessing"]:
-            with Pool() as pool:
-                results = []
-                for y in range(len(self.tiles)):
-                    for x in range(len(self.tiles[y])):
-                        if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
-                            continue
-                        
-                        results.append(
-                            pool.apply_async(
-                                self.legal_moves_from, (x, y)
-                            )
-                        )
-                        
-                for result in results:
-                    legal_move_nodes.extend(result.get())
-        else:
-            for y in range(len(self.tiles)):
-                for x in range(len(self.tiles[y])):
-                    if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
-                        continue
-                    
-                    legal_move_nodes += self.legal_moves_from(x, y)
+        pool = Pool()
+        pool_results = []
+
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles[y])):
+                if TileModifier.FROZEN in self.tile_at(x, y).modifiers:
+                    continue
+
+                if config["multiProcessing"]:
+                    pool_results.append(
+                        pool.apply_async(self.legal_moves_from, (x, y))
+                    )
+                else:
+                    legal_move_nodes.extend(
+                        self.legal_moves_from(x, y)
+                    )
+
+        for pool_result in pool_results:
+            legal_move_nodes.extend(pool_result.get())
+
+        pool.terminate()
 
         # Remove duplicates, only keeping the best copies of each word
         unique_move_map: dict[str, SearchNode] = {}

@@ -2,5 +2,5 @@
     "movesShown": 5,
     "gemManagement": true,
     "prettyPrint": false,
-    "multiProcessing": false
+    "multiProcessing": true
 }

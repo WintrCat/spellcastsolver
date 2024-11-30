@@ -76,7 +76,7 @@ class SearchNode(Tile):
     
 
     def pretty_word(self):
-        # ANSI escape codes for colors
+        # ANSI escape codes for colours
         RED = '\033[91m'
         RESET = '\033[0m'
         board = [(['█'] * 5) for _ in range(5)]
