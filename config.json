@@ -1,6 +1,6 @@
 {
     "movesShown": 5,
+    "verboseOutput": false,
     "gemManagement": true,
-    "prettyPrint": false,
     "multiProcessing": true
 }
